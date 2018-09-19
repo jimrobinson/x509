@@ -53,7 +53,7 @@ func main() {
 	}
 }
 
-// outputCert prints a certifcate to STDOUT using the
+// outputCert prints a certificate to STDOUT using the
 // specified formats, "info", "pem", or binary "der".
 func outputCert(crt *x509.Certificate, out string) {
 	switch out {

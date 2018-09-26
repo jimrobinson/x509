@@ -76,13 +76,6 @@ func main() {
 				outputCert(state.PeerCertificates[i], opt_out)
 			}
 
-			/*
-				for i := 0; i < len(state.VerifiedChains); i++ {
-					for j := 0; j < len(state.VerifiedChains[i]); j++ {
-						outputCert(state.VerifiedChains[i][j], opt_out)
-					}
-				}
-			*/
 			continue
 		}
 

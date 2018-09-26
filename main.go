@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
 	"flag"
@@ -8,6 +9,8 @@ import (
 	"github.com/grantae/certinfo"
 	"io/ioutil"
 	"log"
+	"net"
+	"net/url"
 	"os"
 )
 
@@ -24,9 +27,62 @@ func main() {
 	args := flag.Args()
 
 	for i := 0; i < len(args); i++ {
-		buf, err := ioutil.ReadFile(args[i])
+		v := args[i]
+
+		// attempt to read v as a local file, if that fails
+		// fallback to checking for urls or host:port
+		// addresses
+		buf, err := ioutil.ReadFile(v)
 		if err != nil {
-			log.Printf("unable to open file %s: %v", args[i], err)
+
+			var host string
+			var port string
+
+			if u, err := url.Parse(v); u != nil {
+				host, port, err = net.SplitHostPort(u.Host)
+				if err != nil {
+					if u.Scheme == "https" && u.Host != "" {
+						host, port = u.Host, "443"
+					} else {
+						log.Printf("unable to open file, url, or address %s: %v", v, err)
+						continue
+					}
+				}
+			} else {
+				host, port, err = net.SplitHostPort(v)
+				if err != nil {
+					log.Printf("unable to open file, url, or address %s: %v", v, err)
+					continue
+				}
+			}
+
+			if host == "" && port != "" {
+				host = "localhost"
+			}
+
+			addr := net.JoinHostPort(host, port)
+
+			conn, err := tls.Dial("tcp", addr, nil)
+			if err != nil {
+				log.Printf("unable to open file, url, or address %s: %v", v, err)
+				continue
+			}
+
+			defer conn.Close()
+
+			state := conn.ConnectionState()
+
+			for i := 0; i < len(state.PeerCertificates); i++ {
+				outputCert(state.PeerCertificates[i], opt_out)
+			}
+
+			/*
+				for i := 0; i < len(state.VerifiedChains); i++ {
+					for j := 0; j < len(state.VerifiedChains[i]); j++ {
+						outputCert(state.VerifiedChains[i][j], opt_out)
+					}
+				}
+			*/
 			continue
 		}
 

@@ -126,7 +126,7 @@ func outputCert(crt *x509.Certificate, out string) {
 	case "der":
 		os.Stdout.Write(crt.Raw)
 	default:
-		log.Println("unrecognized -t option (valid values are: info, pem, and der):", out)
+		log.Println("unrecognized -o option (valid values are: info, pem, and der):", out)
 		os.Exit(1)
 	}
 }

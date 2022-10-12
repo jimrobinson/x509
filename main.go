@@ -16,9 +16,8 @@ import (
 
 var opt_out string
 
-// main parses one or more files provided on the command
-// line and prints the certificates in the specified format
-// (the default being "info").
+// main parses one or more filepaths or URLs provided on the command line and
+// prints the certificates in the specified format (the default being "info").
 func main() {
 	flag.StringVar(&opt_out, "o", "info", "output type: info, pem, or der")
 
@@ -29,10 +28,17 @@ func main() {
 	for i := 0; i < len(args); i++ {
 		v := args[i]
 
-		// attempt to read v as a local file, if that fails
-		// fallback to checking for urls or host:port
-		// addresses
-		buf, err := ioutil.ReadFile(v)
+		// if v is "-" read stdin, otherwise treat
+		// it as a file
+		var buf []byte
+		var err error
+		if v == "-" {
+			buf, err = ioutil.ReadAll(os.Stdin)
+		} else {
+			buf, err = ioutil.ReadFile(v)
+		}
+
+		// if neither of the above worked, try a url
 		if err != nil {
 
 			var host string

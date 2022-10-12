@@ -1,0 +1,12 @@
+name: "x509"
+arch: "amd64"
+platform: "linux"
+version: "1.0.0"
+section: "Applications/System"
+priority: "extra"
+maintainer: "James A. Robinson <jim@cdminsights.com>"
+description: "X.509 certificate information and conversion tool"
+homepage: "https://github.com/jimrobinson/x509"
+contents:
+  - src: ./x509
+    dst: /usr/bin/x509

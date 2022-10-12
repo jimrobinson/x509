@@ -1,0 +1,49 @@
+NAME
+
+    x509 - read a TLS certificate and either dump info or convert it
+
+SYNOPSIS
+
+    x509 [-o { info | der | pem }] { - | filepath | URL }
+
+DESCRIPTION
+
+    x509 reads a TLS certificate (DER or PEM encoded) from a URL or a filepath
+    and outputs one of three possible results, based on the -o output flag:
+
+        info: human readable details about the certificate (the default).
+
+        der: Distinguished Encoding Rules binary format.
+
+        pem: Privacy Enhanced Mail ascii format.
+
+    The certificate argument may be a filepath or a URL, with the special
+    filepath "-" indicating that standard input should be read.
+
+EXAMPLE
+
+    read a certificate from a URL:
+
+        x509 https://google.com/
+
+        x509 -o info https://google.com/
+
+    read a certificate and output it in DER format
+
+        x509 -o der https://google.com/ > google.der
+
+    read a certificate and output it in PEM format:
+
+        x509 -o pem https://google.com/ > google.pem
+
+    read a certificate from a filepath:
+
+        x509 google.der
+
+        x509 google.pem
+
+    read standard input
+
+	cat google.der | x509 -
+
+        cat google.pem | x509 -
